@@ -1,0 +1,7 @@
+{
+  "name": "Sistem Tuntutan Lebih Masa",
+  "description": "Sistem pengurusan tuntutan elaun lebih masa (ELM) secara automatik dengan keupayaan menjana PDF mengikut format rasmi.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
