@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { LogIn, FileText, LayoutDashboard, LogOut, ChevronRight, Printer, Trash2, Loader2, AlertCircle } from 'lucide-react';
+import { LogIn, FileText, LayoutDashboard, LogOut, ChevronRight, Printer, Trash2, Loader2, AlertCircle, Edit2 } from 'lucide-react';
 import ClaimForm from './components/ClaimForm';
 import PDFView from './components/PDFView';
 import { getClaims, deleteClaim, auth } from './firebase';
@@ -29,11 +29,7 @@ const App: React.FC = () => {
         setClaims(data as OTClaim[]);
       } catch (err: any) {
         console.error(err);
-        if (err.message.includes('index')) {
-          setDashboardError('Indeks Firestore diperlukan. Sila klik link di Console (F12) untuk bina indeks.');
-        } else {
-          setDashboardError('Gagal memuatkan data. Sila cuba sebentar lagi.');
-        }
+        setDashboardError('Gagal memuatkan data. Sila cuba sebentar lagi.');
       } finally {
         setFetchingClaims(false);
       }
@@ -82,6 +78,11 @@ const App: React.FC = () => {
       await deleteClaim(id);
       refreshClaims();
     }
+  };
+
+  const handleEdit = (claim: OTClaim) => {
+    setSelectedClaim(claim);
+    setView('form');
   };
 
   if (loading) {
@@ -195,7 +196,7 @@ const App: React.FC = () => {
                 <p className="text-gray-500">Uruskan tuntutan bulanan anda di sini.</p>
               </div>
               <button 
-                onClick={() => setView('form')}
+                onClick={() => { setSelectedClaim(null); setView('form'); }}
                 className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-blue-600/20 hover:scale-105 transition-transform"
               >
                 Tuntutan Baru <ChevronRight size={18} />
@@ -239,12 +240,22 @@ const App: React.FC = () => {
                       <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                         {['JAN', 'FEB', 'MAC', 'APR', 'MEI', 'JUN', 'JUL', 'OGOS', 'SEP', 'OKT', 'NOV', 'DIS'][parseInt(claim.month)-1]} {claim.year}
                       </div>
-                      <button 
-                        onClick={() => handleDelete(claim.id!)}
-                        className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex gap-1">
+                        <button 
+                          onClick={() => handleEdit(claim)}
+                          className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-blue-50 transition-colors"
+                          title="Edit Tuntutan"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(claim.id!)}
+                          className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors"
+                          title="Padam Tuntutan"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
                     <div className="mb-6">
                       <div className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Jumlah Tuntutan</div>
@@ -278,15 +289,10 @@ const App: React.FC = () => {
           </div>
         ) : (
           <div className="bg-gray-50 min-h-[calc(100-4rem)]">
-            <div className="max-w-7xl mx-auto px-4 py-6">
-               <button 
-                onClick={() => setView('dashboard')}
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-bold mb-4"
-              >
-                <LayoutDashboard size={18} /> Dashboard
-              </button>
-              <ClaimForm onComplete={() => { setView('dashboard'); refreshClaims(); }} />
-            </div>
+            <ClaimForm 
+              initialClaim={selectedClaim} 
+              onComplete={() => { setView('dashboard'); refreshClaims(); }} 
+            />
           </div>
         )}
       </main>

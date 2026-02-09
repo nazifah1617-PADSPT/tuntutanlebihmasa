@@ -8,7 +8,8 @@ import {
   query, 
   where, 
   deleteDoc, 
-  doc
+  doc,
+  updateDoc
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -44,13 +45,27 @@ export const saveClaim = async (claim: any) => {
   }
 };
 
+export const updateClaim = async (id: string, claim: any) => {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Pengguna tidak log masuk");
+
+  try {
+    const claimRef = doc(db, "claims", id);
+    await updateDoc(claimRef, {
+      ...claim,
+      updatedAt: Date.now()
+    });
+  } catch (error) {
+    console.error("Error updating claim:", error);
+    throw error;
+  }
+};
+
 export const getClaims = async () => {
   const user = auth.currentUser;
   if (!user) return [];
 
   try {
-    // We remove the orderBy here to avoid the requirement for a composite index in Firestore.
-    // Instead, we will sort the results on the client side.
     const q = query(
       collection(db, "claims"), 
       where("userId", "==", user.uid)

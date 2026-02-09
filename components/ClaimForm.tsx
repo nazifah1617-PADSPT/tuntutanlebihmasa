@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Save, Download, Calculator, User } from 'lucide-react';
-import { OTLine, UserProfile, DayType } from '../types';
+import { Plus, Trash2, Save, Calculator, User, ArrowLeft } from 'lucide-react';
+import { OTLine, UserProfile, DayType, OTClaim } from '../types';
 import { calculateHourlyRate, calculateMaxOTLimit, calculateOTHours, formatCurrency } from '../utils/calculations';
-import { saveClaim } from '../firebase';
+import { saveClaim, updateClaim } from '../firebase';
 
 const INITIAL_PROFILE: UserProfile = {
   name: 'AHMAD HAFIZAN BIN HJ ABD. HALIM',
@@ -21,20 +21,28 @@ const INITIAL_PROFILE: UserProfile = {
   weekendDays: 'Sabtu-Ahad'
 };
 
-const ClaimForm: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+interface ClaimFormProps {
+  onComplete: () => void;
+  initialClaim?: OTClaim | null;
+}
+
+const ClaimForm: React.FC<ClaimFormProps> = ({ onComplete, initialClaim }) => {
   const [profile, setProfile] = useState<UserProfile>(() => {
+    if (initialClaim) return initialClaim.profile;
     const saved = localStorage.getItem('user_profile');
     return saved ? JSON.parse(saved) : INITIAL_PROFILE;
   });
 
-  const [month, setMonth] = useState('01');
-  const [year, setYear] = useState('2026');
-  const [lines, setLines] = useState<OTLine[]>([]);
+  const [month, setMonth] = useState(initialClaim?.month || '01');
+  const [year, setYear] = useState(initialClaim?.year || '2026');
+  const [lines, setLines] = useState<OTLine[]>(initialClaim?.lines || []);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('user_profile', JSON.stringify(profile));
-  }, [profile]);
+    if (!initialClaim) {
+      localStorage.setItem('user_profile', JSON.stringify(profile));
+    }
+  }, [profile, initialClaim]);
 
   const addLine = () => {
     const newLine: OTLine = {
@@ -101,19 +109,45 @@ const ClaimForm: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
   const handleSave = async () => {
     setIsSaving(true);
-    await saveClaim({
-      month,
-      year,
-      profile,
-      lines,
-      createdAt: Date.now()
-    });
-    setIsSaving(false);
-    onComplete();
+    try {
+      const claimData = {
+        month,
+        year,
+        profile,
+        lines
+      };
+      
+      if (initialClaim?.id) {
+        await updateClaim(initialClaim.id, claimData);
+      } else {
+        await saveClaim({
+          ...claimData,
+          createdAt: Date.now()
+        });
+      }
+      onComplete();
+    } catch (error) {
+      alert("Gagal menyimpan tuntutan.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8">
+      <button 
+        onClick={onComplete}
+        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-bold transition-colors"
+      >
+        <ArrowLeft size={18} /> Kembali ke Dashboard
+      </button>
+
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-black text-gray-900">
+          {initialClaim ? 'Kemas Kini Tuntutan' : 'Tuntutan Baru'}
+        </h1>
+      </div>
+
       {/* Header Profile Section */}
       <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
         <div className="flex items-center gap-2 mb-6 border-b pb-4">
@@ -334,7 +368,7 @@ const ClaimForm: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             {isSaving ? 'Menyimpan...' : (
               <>
                 <Save size={20} />
-                Simpan Tuntutan
+                {initialClaim ? 'Kemas Kini Tuntutan' : 'Simpan Tuntutan'}
               </>
             )}
           </button>
