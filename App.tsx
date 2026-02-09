@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { LogIn, FileText, LayoutDashboard, LogOut, ChevronRight, Printer, Trash2, Loader2 } from 'lucide-react';
+import { LogIn, FileText, LayoutDashboard, LogOut, ChevronRight, Printer, Trash2, Loader2, AlertCircle } from 'lucide-react';
 import ClaimForm from './components/ClaimForm';
 import PDFView from './components/PDFView';
 import { getClaims, deleteClaim, auth } from './firebase';
@@ -10,6 +10,7 @@ import { OTClaim } from './types';
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchingClaims, setFetchingClaims] = useState(false);
   const [view, setView] = useState<'dashboard' | 'form' | 'print'>('dashboard');
   const [selectedClaim, setSelectedClaim] = useState<OTClaim | null>(null);
   const [claims, setClaims] = useState<OTClaim[]>([]);
@@ -17,11 +18,25 @@ const App: React.FC = () => {
   const [passwordInput, setPasswordInput] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState('');
+  const [dashboardError, setDashboardError] = useState('');
 
   const refreshClaims = async () => {
     if (auth.currentUser) {
-      const data = await getClaims();
-      setClaims(data as OTClaim[]);
+      setFetchingClaims(true);
+      setDashboardError('');
+      try {
+        const data = await getClaims();
+        setClaims(data as OTClaim[]);
+      } catch (err: any) {
+        console.error(err);
+        if (err.message.includes('index')) {
+          setDashboardError('Indeks Firestore diperlukan. Sila klik link di Console (F12) untuk bina indeks.');
+        } else {
+          setDashboardError('Gagal memuatkan data. Sila cuba sebentar lagi.');
+        }
+      } finally {
+        setFetchingClaims(false);
+      }
     }
   };
 
@@ -31,6 +46,8 @@ const App: React.FC = () => {
       setLoading(false);
       if (currentUser) {
         refreshClaims();
+      } else {
+        setClaims([]);
       }
     });
     return () => unsubscribe();
@@ -50,6 +67,7 @@ const App: React.FC = () => {
       if (err.message.includes('auth/user-not-found')) message = 'Emel tidak dijumpai.';
       if (err.message.includes('auth/wrong-password')) message = 'Kata laluan salah.';
       if (err.message.includes('auth/email-already-in-use')) message = 'Emel ini sudah berdaftar.';
+      if (err.message.includes('auth/weak-password')) message = 'Kata laluan terlalu lemah (min 6 aksara).';
       setError(message);
     }
   };
@@ -86,7 +104,7 @@ const App: React.FC = () => {
             <p className="text-gray-500 text-sm">{isRegistering ? 'Daftar akaun baru' : 'Log masuk untuk mulakan tuntutan'}</p>
           </div>
           
-          {error && <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm mb-4 border border-red-100">{error}</div>}
+          {error && <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm mb-4 border border-red-100 flex items-center gap-2"><AlertCircle size={16}/> {error}</div>}
 
           <form onSubmit={handleAuth} className="space-y-4">
             <div>
@@ -184,14 +202,35 @@ const App: React.FC = () => {
               </button>
             </div>
 
-            {claims.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-gray-200">
-                <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FileText className="text-gray-400 w-10 h-10" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Tiada tuntutan dijumpai</h3>
-                <p className="text-gray-500 max-w-sm mx-auto">Klik butang 'Tuntutan Baru' untuk menjana borang ELM bulan pertama anda.</p>
+            {dashboardError && (
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-3xl mb-8 flex flex-col items-center text-center">
+                <AlertCircle className="w-12 h-12 mb-4 text-amber-500" />
+                <h3 className="text-lg font-bold mb-2">Perhatian</h3>
+                <p className="max-w-md">{dashboardError}</p>
+                <button 
+                  onClick={refreshClaims}
+                  className="mt-4 text-sm font-bold underline"
+                >
+                  Cuba Refresh
+                </button>
               </div>
+            )}
+
+            {fetchingClaims ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <Loader2 className="animate-spin text-blue-600 w-10 h-10 mb-4" />
+                <p className="text-gray-500">Memuatkan data dari Firebase...</p>
+              </div>
+            ) : claims.length === 0 ? (
+              !dashboardError && (
+                <div className="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-gray-200">
+                  <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <FileText className="text-gray-400 w-10 h-10" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Tiada tuntutan dijumpai</h3>
+                  <p className="text-gray-500 max-w-sm mx-auto">Klik butang 'Tuntutan Baru' untuk menjana borang ELM bulan pertama anda.</p>
+                </div>
+              )
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {claims.map((claim) => (
