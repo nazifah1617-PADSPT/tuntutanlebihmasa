@@ -154,11 +154,11 @@ const ClaimForm: React.FC<ClaimFormProps> = ({ onComplete, initialClaim }) => {
           <User className="text-blue-600" />
           <h2 className="text-xl font-bold">Maklumat Peribadi</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">Nama Penuh</label>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-xs font-semibold text-gray-500 mb-1">Nama Penuh (Seperti Dalam IC)</label>
             <input 
-              className="w-full p-2 border rounded bg-gray-50 focus:bg-white" 
+              className="w-full p-2 border rounded bg-gray-50 focus:bg-white uppercase" 
               value={profile.name} 
               onChange={e => setProfile({...profile, name: e.target.value})}
             />
@@ -171,40 +171,90 @@ const ClaimForm: React.FC<ClaimFormProps> = ({ onComplete, initialClaim }) => {
               onChange={e => setProfile({...profile, ic: e.target.value})}
             />
           </div>
+
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">Gaji Pokok (RM)</label>
+            <label className="block text-xs font-semibold text-gray-500 mb-1">No. Gaji</label>
             <input 
-              type="number"
-              className="w-full p-2 border rounded bg-gray-50 focus:bg-white font-mono" 
-              value={profile.basicSalary} 
-              onChange={e => setProfile({...profile, basicSalary: parseFloat(e.target.value) || 0})}
+              className="w-full p-2 border rounded bg-gray-50 focus:bg-white" 
+              value={profile.salaryNo} 
+              onChange={e => setProfile({...profile, salaryNo: e.target.value})}
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">Jawatan/Gred</label>
+            <label className="block text-xs font-semibold text-gray-500 mb-1">No. Telefon</label>
             <input 
               className="w-full p-2 border rounded bg-gray-50 focus:bg-white" 
+              value={profile.phone} 
+              onChange={e => setProfile({...profile, phone: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 mb-1">eMail</label>
+            <input 
+              type="email"
+              className="w-full p-2 border rounded bg-gray-50 focus:bg-white" 
+              value={profile.email} 
+              onChange={e => setProfile({...profile, email: e.target.value})}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 mb-1">Jawatan/Gred</label>
+            <input 
+              className="w-full p-2 border rounded bg-gray-50 focus:bg-white uppercase" 
               value={profile.position} 
               onChange={e => setProfile({...profile, position: e.target.value})}
             />
           </div>
           <div>
+            <label className="block text-xs font-semibold text-gray-500 mb-1">Bahagian/Unit</label>
+            <input 
+              className="w-full p-2 border rounded bg-gray-50 focus:bg-white uppercase" 
+              value={profile.unit} 
+              onChange={e => setProfile({...profile, unit: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 mb-1">Jabatan/Negeri</label>
+            <input 
+              className="w-full p-2 border rounded bg-gray-50 focus:bg-white uppercase" 
+              value={profile.department} 
+              onChange={e => setProfile({...profile, department: e.target.value})}
+            />
+          </div>
+
+          <div>
             <label className="block text-xs font-semibold text-gray-500 mb-1">Bank / No Akaun</label>
             <input 
-              className="w-full p-2 border rounded bg-gray-50 focus:bg-white" 
+              className="w-full p-2 border rounded bg-gray-50 focus:bg-white uppercase" 
               value={profile.bankAccount} 
               onChange={e => setProfile({...profile, bankAccount: e.target.value})}
             />
           </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 mb-1">Pusat Pembayaran</label>
+            <input 
+              className="w-full p-2 border rounded bg-gray-50 focus:bg-white uppercase" 
+              value={profile.paymentCenter} 
+              onChange={e => setProfile({...profile, paymentCenter: e.target.value})}
+            />
+          </div>
           <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-            <div className="text-xs text-blue-700 font-bold uppercase tracking-wider mb-1">Kiraan Automatik</div>
-            <div className="flex justify-between text-sm">
-              <span>Kadar Sejam:</span>
-              <span className="font-bold">{formatCurrency(hourlyRate)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>1/3 Gaji (Had):</span>
-              <span className="font-bold">{formatCurrency(maxLimit)}</span>
+            <div className="text-xs text-blue-700 font-bold uppercase tracking-wider mb-1">Kiraan Gaji</div>
+            <div className="flex flex-col gap-1">
+              <div className="flex justify-between text-xs">
+                <span>Gaji Pokok:</span>
+                <input 
+                  type="number"
+                  className="w-24 text-right bg-transparent font-bold border-b border-blue-200 outline-none"
+                  value={profile.basicSalary} 
+                  onChange={e => setProfile({...profile, basicSalary: parseFloat(e.target.value) || 0})}
+                />
+              </div>
+              <div className="flex justify-between text-xs pt-1 border-t border-blue-100">
+                <span>Kadar Sejam:</span>
+                <span className="font-bold">{formatCurrency(hourlyRate)}</span>
+              </div>
             </div>
           </div>
         </div>
