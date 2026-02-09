@@ -8,8 +8,7 @@ import {
   query, 
   where, 
   deleteDoc, 
-  doc,
-  orderBy 
+  doc
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -35,7 +34,7 @@ export const saveClaim = async (claim: any) => {
   try {
     const docRef = await addDoc(collection(db, "claims"), {
       ...claim,
-      userId: user.uid, // Required for security rules: allow read/write if request.auth.uid == resource.data.userId
+      userId: user.uid,
       createdAt: Date.now()
     });
     return docRef.id;
@@ -50,19 +49,24 @@ export const getClaims = async () => {
   if (!user) return [];
 
   try {
+    // We remove the orderBy here to avoid the requirement for a composite index in Firestore.
+    // Instead, we will sort the results on the client side.
     const q = query(
       collection(db, "claims"), 
-      where("userId", "==", user.uid),
-      orderBy("createdAt", "desc")
+      where("userId", "==", user.uid)
     );
+    
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
+    const data = querySnapshot.docs.map(doc => ({
       ...doc.data(),
       id: doc.id
-    }));
+    })) as any[];
+
+    // Sort client-side by createdAt descending
+    return data.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
   } catch (error) {
     console.error("Error fetching claims:", error);
-    return [];
+    throw error;
   }
 };
 
