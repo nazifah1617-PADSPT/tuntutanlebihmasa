@@ -189,57 +189,58 @@ const PDFView: React.FC<Props> = ({ claim }) => {
       </div>
 
       {/* PAGE 2: DECLARATIONS & CHECKLIST strictly matching screenshot 2 layout */}
-      <div className="bg-white p-[1.5cm] w-[297mm] h-[210mm] mx-auto text-[10.5px] leading-snug font-sans text-black relative shadow-2xl print:shadow-none flex flex-col overflow-hidden">
-        <div className="space-y-12 mt-10">
-          {/* Perakuan Pegawai */}
-          <div>
+      <div className="bg-white p-[1.5cm] w-[297mm] h-[210mm] mx-auto text-[11px] leading-snug font-sans text-black relative shadow-2xl print:shadow-none flex flex-col overflow-hidden">
+        <div className="space-y-12 mt-4">
+          
+          {/* Section 1: Perakuan Pegawai */}
+          <div className="relative">
             <div className="font-bold mb-1 uppercase">PERAKUAN :</div>
             <p className="text-justify leading-relaxed">Dengan ini saya mengaku bahawa selain menjalankan tugas pada waktu kerja biasa saya juga diarah bertugas di luar waktu kerja biasa. Saya tidak diberi 'Book Off' dan juga 'Tidak Menanggung Kerja'. Diakui butir-butir di atas benar.</p>
-            <div className="flex justify-between items-end mt-4">
-              <div className="flex gap-2 font-bold">Tarikh : <span className="w-64 border-b border-black mb-1"></span></div>
-              <div className="text-center">
-                <div className="mb-0.5">----------------------------------------------------------------------------------------------------------------------------------</div>
-                <div className="font-bold text-[10px]">( Tandatangan Pegawai Yang Menuntut )</div>
+            <div className="flex justify-between items-end mt-8">
+              <div className="flex gap-1 font-bold">Tarikh : <span className="w-64 border-b border-transparent"></span></div>
+              <div className="text-center w-full max-w-[500px]">
+                <div className="mb-0.5 font-normal tracking-[-1px]">------------------------------------------------------------------------------------------------------------------------------------------------------</div>
+                <div className="font-bold text-[10.5px] tracking-wide uppercase">( Tandatangan Pegawai Yang Menuntut )</div>
               </div>
             </div>
           </div>
 
-          {/* Perakuan Ketua Unit / Ketua Jabatan */}
+          {/* Section 2: Perakuan Ketua Unit / Ketua Jabatan */}
           <div>
             <div className="font-bold mb-1 uppercase">PERAKUAN KETUA UNIT / KETUA JABATAN :</div>
             <p className="text-justify leading-relaxed">Diakui bahawa kerja-kerja di atas adalah mustahak dijalankan di luar waktu bekerja biasa dan tidak boleh ditangguhkan pada hari berikutnya atau diserahkan kepada anggota lain yang sedang bertugas. Disahkan juga bahawa pegawai ini tidak 'Menanggung Kerja'. Perlaksanaan kerja-kerja ini adalah mematuhi syarat-syarat dan peraturan mengikut perintah Am Bab 'G' 1974 dan P.P.Bil 9 Tahun 1991.</p>
-            <div className="flex justify-between items-end mt-4">
-              <div className="flex gap-2 font-bold">Tarikh : <span className="w-64 border-b border-black mb-1"></span></div>
-              <div className="flex gap-12 flex-1 justify-end">
-                <div className="text-center w-[250px]">
-                  <div className="mb-0.5">------------------------------------------------------------------------</div>
-                  <div className="font-bold text-[10px]">( Tandatangan Ketua Unit )</div>
+            <div className="flex justify-between items-end mt-12">
+              <div className="flex gap-1 font-bold">Tarikh : <span className="w-48 border-b border-transparent"></span></div>
+              <div className="flex gap-16 flex-1 justify-end">
+                <div className="text-center w-[350px]">
+                  <div className="mb-0.5 font-normal tracking-[-1px]">-----------------------------------------------------------------------------------------------------</div>
+                  <div className="font-bold text-[10.5px] tracking-wide uppercase">( Tandatangan Ketua Unit )</div>
                 </div>
-                <div className="text-center w-[250px]">
-                  <div className="mb-0.5">------------------------------------------------------------------------</div>
-                  <div className="font-bold text-[10px]">( Tandatangan Ketua Jabatan )</div>
+                <div className="text-center w-[350px]">
+                  <div className="mb-0.5 font-normal tracking-[-1px]">-----------------------------------------------------------------------------------------------------</div>
+                  <div className="font-bold text-[10.5px] tracking-wide uppercase">( Tandatangan Ketua Jabatan )</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Perakuan 1/3 Gaji */}
+          {/* Section 3: Perakuan 1/3 Gaji */}
           <div>
             <div className="font-bold mb-1 uppercase">PERAKUAN KETUA JABATAN <span className="italic font-normal normal-case">(melebihi 1/3 gaji)</span> :</div>
             <p className="text-justify leading-relaxed">Adalah disahkan bahawa oleh sebab-sebab tertentu, anggota berkenaan telah dikehendaki bekerja lebihmasa yang mana jumlah tuntutan Elaun Lebih Masa melebihi 1/3 daripada gaji bulanannya dan mematuhi syarat-syarat yang terkandung di perenggan 2(C) Surat Pekeliling Perkhidmatan Bil. 21 Tahun 1977. Diluluskan oleh Pegawai Kanan Tertinggi 'G' dan ke atas.</p>
-            <div className="flex justify-between items-end mt-4">
-              <div className="flex gap-2 font-bold">Tarikh : <span className="w-64 border-b border-black mb-1"></span></div>
-              <div className="text-center">
-                <div className="mb-0.5">----------------------------------------------------------------------------------------------------------------------------------</div>
-                <div className="font-bold text-[10px]">( Tandatangan Pegawai T/Tertinggi Dalam Kumpulan A )</div>
+            <div className="flex justify-between items-end mt-12">
+              <div className="flex gap-1 font-bold">Tarikh : <span className="w-64 border-b border-transparent"></span></div>
+              <div className="text-center w-full max-w-[500px]">
+                <div className="mb-0.5 font-normal tracking-[-1px]">------------------------------------------------------------------------------------------------------------------------------------------------------</div>
+                <div className="font-bold text-[10.5px] tracking-wide uppercase">( Tandatangan Pegawai T/Tertinggi Dalam Kumpulan A )</div>
               </div>
             </div>
           </div>
 
-          {/* Senarai Semak with specific formatting from screenshot */}
-          <div className="mt-16">
+          {/* Senarai Semak with Checkboxes */}
+          <div className="mt-20">
             <div className="font-bold mb-6 underline italic text-[14px]">Senarai Semak :</div>
-            <div className="space-y-4 ml-2">
+            <div className="space-y-3.5 ml-2">
               {[
                 { label: "i)", text: "Surat arahan bertulis sebelum menjalankan kerja lebih masa atau Jadual Tugas." },
                 { label: "ii)", text: "Kadar Sejam = <span class='inline-flex flex-col items-center mx-1 align-middle'><span class='border-b border-black px-2'>gaji pokok x 12 bulan</span><span>2504</span></span>" },
@@ -250,7 +251,7 @@ const PDFView: React.FC<Props> = ({ claim }) => {
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-6">
                   <div className="text-[11px] font-bold w-5">{item.label}</div>
-                  <div className="w-8 h-7 border-2 border-black flex items-center justify-center font-bold text-lg leading-none">
+                  <div className="w-8 h-7 border-2 border-black flex items-center justify-center font-bold text-lg leading-none shrink-0">
                     <span className="mt-0.5 font-bold">√</span>
                   </div>
                   <div className="flex-1 text-[11px]" dangerouslySetInnerHTML={{ __html: item.text }} />
@@ -260,8 +261,8 @@ const PDFView: React.FC<Props> = ({ claim }) => {
           </div>
         </div>
         
-        {/* Page counter at bottom */}
-        <div className="absolute bottom-6 right-10 text-right text-[8px] text-gray-300 italic">Muka Surat 2/2</div>
+        {/* Page counter at bottom hidden on print but good for preview */}
+        <div className="absolute bottom-6 right-10 text-right text-[8px] text-gray-300 italic no-print">Muka Surat 2/2</div>
       </div>
     </div>
   );
